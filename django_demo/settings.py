@@ -140,14 +140,14 @@ FEI_SHU_URL = ""  # 飞书群机器人报警url
 # logs
 FORMATTERS = {
     'access': {
-        'format': '%(client_ip)s %(x_forwarded_ip)s %(asctime)s %(process)d/%(thread)d %(http_user_agent)s '
+        'format': '%(asctime)s %(client_ip)s %(x_forwarded_ip)s %(process)d/%(thread)d %(http_user_agent)s '
                   '%(server_name)s %(protocol)s %(path)s %(status)s %(content_length)s %(duration)s '
                   '%(levelname)s %(message)s',
-        'datefmt': "%Y/%m/%d %H:%M:%S"
+        'datefmt': "%Y-%m-%d %H:%M:%S"
     },
     'default': {
         'format': '%(asctime)s%(process)d/%(thread)d%(name)s%(funcName)s %(lineno)s%(levelname)s%(message)s',
-        'datefmt': "%Y/%m/%d %H:%M:%S"
+        'datefmt': "%Y-%m-%d %H:%M:%S"
     }
 }
 
