@@ -14,6 +14,7 @@ class TestJson(MyView):
 
 class TestPDF(MyView):
     def get(self, request):
+        self.logger.info("view pdf")
         return PDFViewResponse("/Users/yaoshao/Desktop/app_source_addr.pdf", "app_source_addr.pdf")
 
 
