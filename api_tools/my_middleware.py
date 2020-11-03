@@ -33,10 +33,13 @@ class MyMiddleware(object):
         path = request.path
 
         if request.method == 'POST':
+            # 处理post请求，ajax和form data数据都储存到request.data
             try:
                 if not request.POST:
                     data = json.loads(format_body)
-                    setattr(request, "json", data)
+                    setattr(request, "data", data)
+                else:
+                    setattr(request, "data", request.POST)
             except Exception as e:
                 self.logger.warning(
                     f"Process view middleware, process json error, view: {view_func.__name__}, request body:{format_body} path: {path} e: {e}")

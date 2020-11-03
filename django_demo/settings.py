@@ -180,7 +180,10 @@ HANDLERS = {
         'when': 'midnight',
         'interval': 1,
         'formatter': 'default'
-    }
+    },
+    'console': {
+        'class': 'logging.StreamHandler',
+    },
 }
 
 LOGGING = {
@@ -190,7 +193,7 @@ LOGGING = {
     'handlers': HANDLERS,
     'loggers': {
         'django': {
-            'handlers': ['default', 'mail_handler'],
+            'handlers': ['default', 'console'],
             'level': 'INFO',
             'propagate': False
         },
@@ -200,13 +203,13 @@ LOGGING = {
             'propagate': False
         },
         'celery': {
-            'handlers': ['celery', 'mail_handler'],
+            'handlers': ['celery', 'console'],
             'level': 'INFO',
             'propagate': False
         }
     },
     'root': {
-        'handlers': ['default', 'mail_handler'],
+        'handlers': ['default', 'console'],
         'level': 'DEBUG'
     },
 }

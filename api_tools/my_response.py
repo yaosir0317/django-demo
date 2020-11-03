@@ -3,7 +3,7 @@ from django.http import HttpResponse, StreamingHttpResponse
 
 
 class MyJsonResponse(HttpResponse):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         kwargs.setdefault('content_type', 'application/json')
         super(MyJsonResponse, self).__init__(**kwargs)
         self._data = None
@@ -61,31 +61,39 @@ class MyJsonResponse(HttpResponse):
         self.content = json.dumps(result)
 
 
-class PDFResponse(HttpResponse):
-    def __init__(self, **kwargs):
-        super(PDFResponse, self).__init__(**kwargs)
+class PDFViewResponse(HttpResponse):
+    def __init__(self, file_path: str, file_name: str, **kwargs):
+        super(PDFViewResponse, self).__init__(**kwargs)
+        if not file_name.endswith(".pdf"):
+            file_name += ".pdf"
         self['Content-Type'] = 'application/pdf'
-        self['Content-Disposition'] = 'inline; filename="download.pdf"'
+        self['Content-Disposition'] = f"""inline; filename='{file_name}'"""
+        self.write(file_bytes(file_path))
 
 
-class ExcelResponse(StreamingHttpResponse):
+class TestDownload(StreamingHttpResponse):
     def __init__(self, file_path, file_name, *args, **kwargs):
-        super(ExcelResponse, self).__init__(self.file_iterator(file_path), *args, **kwargs)
+        super(TestDownload, self).__init__(file_iterator(file_path), *args, **kwargs)
         self['Content-Type'] = 'application/vnd.ms-excel'
         self['Content-Disposition'] = f'attachment;filename="{file_name}"'
 
-    @staticmethod
-    def file_iterator(file_name, chunk_size=512):
-        """
-        # 用于形成二进制数据
-        :param file_name:
-        :param chunk_size:
-        :return:
-        """
-        with open(file_name, 'rb') as f:
-            while True:
-                c = f.read(chunk_size)
-                if c:
-                    yield c
-                else:
-                    break
+
+def file_iterator(file_name, chunk_size=512):
+    """
+    # 用于形成二进制数据
+    :param file_name:
+    :param chunk_size:
+    :return:
+    """
+    with open(file_name, 'rb') as f:
+        while True:
+            c = f.read(chunk_size)
+            if c:
+                yield c
+            else:
+                break
+
+
+def file_bytes(file_name):
+    with open(file_name, 'rb') as f:
+        return f.read()

@@ -13,14 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.urls import path
+from api import views
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include("api.urls")),
+    path('test_json', views.TestJson.as_view()),
+    path('test_view_pdf', views.TestPDF.as_view()),
+    path('test_download_excel', views.TestDownloadExcel.as_view()),
+    path('test_download_pdf', views.TestDownloadPDF.as_view()),
 ]
-
-urlpatterns += staticfiles_urlpatterns()  # 处理使用gunicorn启动等admin静态文件路径问题
