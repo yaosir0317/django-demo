@@ -25,7 +25,7 @@ SECRET_KEY = 'obxgbv@mdpl-#=i)%7m&k2t$51nz=7x6o17ryblq&0ew21sixp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -44,10 +44,11 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "api_tools.my_middleware.MyMiddleware"
 ]
 
 ROOT_URLCONF = 'django_demo.urls'
@@ -107,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'  # 更改时区
 
 USE_I18N = True
 
@@ -120,3 +121,92 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "/static/")
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+
+# exception mail  报警邮件的配置信息
+EXCEPTION_MAIL_FROM = 'xx@163.com'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'xx@163.com'
+EMAIL_HOST_PASSWORD = 'xxxxxxx'
+EMAIL_USE_SSL = True
+EXCEPTION_MAIL_LIST = ["ss@163.com"]  # 接受报警邮件的列表
+FEI_SHU_URL = ""  # 飞书群机器人报警url
+
+# logs
+FORMATTERS = {
+    'access': {
+        'format': '%(client_ip)s %(x_forwarded_ip)s %(asctime)s %(process)d/%(thread)d %(http_user_agent)s '
+                  '%(server_name)s %(protocol)s %(path)s %(status)s %(content_length)s %(duration)s '
+                  '%(levelname)s %(message)s',
+        'datefmt': "%Y/%m/%d %H:%M:%S"
+    },
+    'default': {
+        'format': '%(asctime)s%(process)d/%(thread)d%(name)s%(funcName)s %(lineno)s%(levelname)s%(message)s',
+        'datefmt': "%Y/%m/%d %H:%M:%S"
+    }
+}
+
+HANDLERS = {
+    'mail_handler': {
+        'level': 'ERROR',
+        'class': 'api_tools.my_handler.SendEmailHandler'
+    },
+    'feishu_handler': {
+        'level': 'ERROR',
+        'class': 'api_tools.my_handler.SendFeiShuHandler'
+    },
+    'access': {
+        'level': 'INFO',
+        'class': 'logging.handlers.TimedRotatingFileHandler',
+        'filename': 'access.log',
+        'when': 'midnight',
+        'interval': 1,
+        'formatter': 'access'
+    },
+    'celery': {
+        'level': 'INFO',
+        'class': 'logging.StreamHandler',
+        'formatter': 'default'
+    },
+    'default': {
+        'level': 'INFO',
+        'class': 'logging.handlers.TimedRotatingFileHandler',
+        'filename': 'default.log',
+        'when': 'midnight',
+        'interval': 1,
+        'formatter': 'default'
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': FORMATTERS,
+    'handlers': HANDLERS,
+    'loggers': {
+        'django': {
+            'handlers': ['default', 'mail_handler'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'access': {
+            'handlers': ['access'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'celery': {
+            'handlers': ['celery', 'mail_handler'],
+            'level': 'INFO',
+            'propagate': False
+        }
+    },
+    'root': {
+        'handlers': ['default', 'mail_handler'],
+        'level': 'DEBUG'
+    },
+}
